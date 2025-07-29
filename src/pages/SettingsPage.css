@@ -1,0 +1,81 @@
+.settings-section {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.settings-icon {
+  font-size: 48px;
+  margin-bottom: var(--spacing-lg);
+}
+
+.settings-section h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.settings-description {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-xl);
+}
+
+.settings-note {
+  font-size: 14px;
+  color: #999;
+  margin-top: var(--spacing-md);
+}
+
+/* Modal de confirmación */
+.confirm-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  width: 90%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  z-index: 301;
+}
+
+.confirm-modal h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.confirm-modal p {
+  color: #666;
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: flex-end;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .settings-section {
+    padding: var(--spacing-lg);
+  }
+  
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .modal-actions button {
+    width: 100%;
+  }
+}

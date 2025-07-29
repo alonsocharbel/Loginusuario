@@ -1,0 +1,42 @@
+.loader {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-spinner {
+  border: 2px solid var(--gray-400);
+  border-top-color: var(--brand-red);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Tamaños */
+.loader-small .loader-spinner {
+  width: 16px;
+  height: 16px;
+}
+
+.loader-medium .loader-spinner {
+  width: 24px;
+  height: 24px;
+}
+
+.loader-large .loader-spinner {
+  width: 40px;
+  height: 40px;
+}
+
+/* Loader de página completa */
+.loader-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}

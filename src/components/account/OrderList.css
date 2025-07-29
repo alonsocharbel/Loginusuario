@@ -1,0 +1,130 @@
+.orders-list {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.list-header {
+  display: grid;
+  grid-template-columns: 1fr 150px 120px 50px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--gray-100);
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  border-bottom: 1px solid var(--gray-400);
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: 1fr 150px 120px 50px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--gray-200);
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.list-item:hover {
+  background-color: var(--gray-100);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.order-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.order-image-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.list-order-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-400);
+}
+
+.order-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.order-number {
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.order-info {
+  font-size: 14px;
+  color: #666;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge-success {
+  background-color: var(--success);
+  color: white;
+}
+
+.status-badge-error {
+  background-color: var(--error);
+  color: white;
+}
+
+.status-badge-warning {
+  background-color: var(--warning);
+  color: white;
+}
+
+.list-col-total {
+  font-weight: 600;
+  text-align: right;
+}
+
+.list-col-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .list-header {
+    display: none;
+  }
+  
+  .list-item {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+  }
+  
+  .list-col-status,
+  .list-col-total {
+    display: none;
+  }
+  
+  .order-details {
+    flex: 1;
+  }
+  
+  .list-col-actions {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+  }
+}
