@@ -10,7 +10,7 @@ import Loader from '../components/shared/Loader';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
   const [profile, setProfile] = useState({
     name: '',
     email: '',
@@ -55,7 +55,7 @@ const ProfilePage = () => {
       setEditingName(false);
       // Actualizar contexto de auth
       if (user) {
-        setUser({ ...user, name: profile.name });
+        updateUser({ ...user, name: profile.name });
       }
     } catch (error) {
       setToast({ message: 'Error al actualizar nombre', type: 'error' });

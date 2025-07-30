@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { accountAPI, trackEvent } from '../utils/api';
+import { trackEvent } from '../utils/api';
 import AccountHeader from '../components/account/AccountHeader';
 import OrderGrid from '../components/account/OrderGrid';
 import OrderList from '../components/account/OrderList';
@@ -7,6 +7,100 @@ import Button from '../components/shared/Button';
 import Loader from '../components/shared/Loader';
 import Toast from '../components/shared/Toast';
 import './AccountPage.css';
+
+// Mock data directamente en el componente para testing
+const mockOrders = [
+  {
+    id: '1060',
+    number: '1060',
+    status: 'confirmed',
+    date: '2024-07-27',
+    total: 17.40,
+    currency: 'MXN',
+    items: [
+      {
+        id: '1',
+        name: 'Producto de prueba',
+        price: 17.40,
+        quantity: 1,
+        image: 'https://picsum.photos/150/150?random=1',
+        variant: null
+      }
+    ]
+  },
+  {
+    id: '1056',
+    number: '1056',
+    status: 'delivered',
+    date: '2024-07-24',
+    deliveryDate: '2024-07-27',
+    total: 2782.84,
+    currency: 'MXN',
+    items: [
+      {
+        id: '1',
+        name: 'GRAV ORBIS LUME WATERPIPE (Copia)',
+        price: 2782.84,
+        quantity: 1,
+        image: 'https://picsum.photos/150/150?random=5',
+        variant: null
+      }
+    ]
+  },
+  {
+    id: '1054',
+    number: '1054',
+    status: 'confirmed',
+    date: '2024-07-23',
+    total: 2550.84,
+    currency: 'MXN',
+    items: [
+      {
+        id: '2',
+        name: 'WATERPIPE SILICONE 8 (Copia)',
+        price: 2550.84,
+        quantity: 1,
+        image: 'https://picsum.photos/150/150?random=6',
+        variant: null
+      }
+    ]
+  },
+  {
+    id: '1053',
+    number: '1053',
+    status: 'confirmed',
+    date: '2024-07-23',
+    total: 4173.68,
+    currency: 'MXN',
+    items: [
+      {
+        id: '3',
+        name: 'GRAV ORBIS LUME WATERPIPE (Copia)',
+        price: 2999.00,
+        quantity: 2,
+        image: 'https://picsum.photos/150/150?random=6'
+      }
+    ]
+  },
+  {
+    id: '1006',
+    number: '1006',
+    status: 'delivered',
+    date: '2024-06-27',
+    deliveryDate: '2024-07-01',
+    total: 8348.52,
+    currency: 'MXN',
+    items: [
+      {
+        id: '5',
+        name: 'Producto Premium',
+        price: 8348.52,
+        quantity: 3,
+        image: 'https://picsum.photos/150/150?random=7'
+      }
+    ]
+  }
+];
 
 const AccountPage = () => {
   const [orders, setOrders] = useState([]);
@@ -19,41 +113,21 @@ const AccountPage = () => {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    loadOrders();
-  }, [filters]);
-
-  const loadOrders = async () => {
-    try {
-      const response = await accountAPI.getOrders(filters);
-      setOrders(response.orders);
-    } catch (error) {
-      setToast({ message: 'Error al cargar pedidos', type: 'error' });
-    } finally {
+    // Simular carga de pedidos
+    console.log('Cargando pedidos mock...');
+    setTimeout(() => {
+      setOrders(mockOrders);
       setLoading(false);
-    }
-  };
+    }, 500);
+  }, []);
 
   const handleBuyAgain = async (orderId) => {
     try {
       trackEvent('volver_a_comprar', { orderId });
-      const response = await accountAPI.buyAgain(orderId);
-      
-      if (response.success) {
-        setToast({ 
-          message: `${response.itemsAdded} productos agregados al carrito`, 
-          type: 'success' 
-        });
-        
-        // Redirigir al carrito después de 2 segundos
-        setTimeout(() => {
-          window.location.href = '/carrito';
-        }, 2000);
-      } else if (response.partial) {
-        setToast({ 
-          message: `Solo ${response.itemsAdded} de ${response.totalItems} productos disponibles`, 
-          type: 'warning' 
-        });
-      }
+      setToast({ 
+        message: `Productos agregados al carrito (simulado)`, 
+        type: 'success' 
+      });
     } catch (error) {
       setToast({ message: 'Error al agregar productos', type: 'error' });
     }
@@ -61,8 +135,8 @@ const AccountPage = () => {
 
   const handleDownloadInvoice = async (orderId) => {
     try {
-      await accountAPI.downloadInvoice(orderId);
       trackEvent('factura_descargada', { orderId });
+      alert('Descarga de factura simulada para pedido #' + orderId);
     } catch (error) {
       setToast({ message: 'Error al descargar factura', type: 'error' });
     }
@@ -118,8 +192,8 @@ const AccountPage = () => {
         {orders.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">🛍️</div>
-            <h2>Aún no tienes pedidos</h2>
-            <p>Cuando hagas tu primera compra, aparecerá aquí.</p>
+            <h2>Aún no tienes ningún pedido</h2>
+            <p>Ve a la tienda para realizar un pedido.</p>
             <Button
               variant="primary"
               onClick={() => window.location.href = '/'}

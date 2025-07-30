@@ -46,7 +46,7 @@ const OrderCard = ({ order, onBuyAgain, onDownloadInvoice }) => {
         <span className="status-text">{ORDER_STATUS_TEXT[order.status]}</span>
       </div>
       
-      <div className="order-date">{formatDate(order.createdAt)}</div>
+      <div className="order-date">{formatDate(order.date || order.createdAt)}</div>
       
       <Link to={`/cuenta/pedidos/${order.id}`} className="order-images-link">
         <div className="order-images">
@@ -71,7 +71,7 @@ const OrderCard = ({ order, onBuyAgain, onDownloadInvoice }) => {
         <span className="order-number">#{order.number}</span>
       </div>
       
-      <div className="order-total">{formatPrice(order.total)}</div>
+      <div className="order-total">{formatPrice(order.total, order.currency)}</div>
       
       <Button
         variant="secondary"

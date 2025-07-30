@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
-import { trackEvent } from '../utils/api';
+import { authAPI, trackEvent } from '../utils/api';
 import Button from '../components/shared/Button';
+import Input from '../components/shared/Input';
 import Toast from '../components/shared/Toast';
 import './LoginPage.css';
 
@@ -14,7 +15,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [toast, setToast] = useState(null);
   
-  // Check if T1pagos is active
+  // Check if T1pagos is active (from env or config)
   const hasT1Pagos = process.env.REACT_APP_T1_PAY_CLIENT_ID ? true : false;
 
   useEffect(() => {
@@ -23,17 +24,31 @@ const LoginPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setEmailOrPhone(value);
+    // Limpiar error cuando el usuario escribe
+    if (error) {
+      setError('');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validación muy básica
-    const trimmed = emailOrPhone.trim();
-    if (!trimmed) {
+    // Validación básica - simplificada para evitar problemas
+    if (!emailOrPhone || emailOrPhone.trim() === '') {
       setError('Por favor ingresa tu email o teléfono');
       return;
     }
 
-    if (trimmed.length < 3) {
+    // Validación muy simple de formato
+    const hasAtSymbol = emailOrPhone.includes('@');
+    const hasDot = emailOrPhone.includes('.');
+    const isLikelyEmail = hasAtSymbol && hasDot;
+    const isLikelyPhone = /\d/.test(emailOrPhone) && emailOrPhone.length >= 10;
+
+    if (!isLikelyEmail && !isLikelyPhone) {
       setError('Por favor ingresa un email o teléfono válido');
       return;
     }
@@ -42,21 +57,35 @@ const LoginPage = () => {
     setError('');
 
     try {
-      console.log('Guardando identificador y navegando a verificación:', trimmed);
+      console.log('Intentando enviar código para:', emailOrPhone);
       
-      // Guardar el identificador
-      setSessionIdentifier(trimmed);
-      trackEvent('codigo_enviado', { success: true, dev: true });
+      // En modo desarrollo, simular éxito directamente
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Modo desarrollo - simulando envío exitoso');
+        trackEvent('codigo_enviado', { success: true, dev: true });
+        setSessionIdentifier(emailOrPhone);
+        
+        // Pequeña demora para simular red
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Navegar a la página de verificación
+        navigate('/cuenta/login/verificar');
+        return;
+      }
+
+      // En producción, usar la API real
+      const response = await authAPI.sendCode(emailOrPhone);
       
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Navegar a verificación
-      navigate('/cuenta/login/verificar');
-      
+      if (response && response.success) {
+        trackEvent('codigo_enviado', { success: true });
+        setSessionIdentifier(emailOrPhone);
+        navigate('/cuenta/login/verificar');
+      } else {
+        setError('Error al enviar el código. Intenta nuevamente.');
+      }
     } catch (error) {
-      console.error('Error inesperado:', error);
-      setError('Ocurrió un error. Intenta nuevamente.');
+      console.error('Error al enviar código:', error);
+      setError('Error de conexión. Intenta nuevamente');
     } finally {
       setLoading(false);
     }
@@ -64,7 +93,13 @@ const LoginPage = () => {
 
   const handleT1PayLogin = () => {
     trackEvent('login_con_t1pay', { initiated: true });
-    navigate('/cuenta/login/t1pay');
+    // En desarrollo, simular el flujo de T1 Pay
+    if (process.env.NODE_ENV === 'development') {
+      navigate('/cuenta/login/t1pay');
+    } else {
+      const authUrl = `${process.env.REACT_APP_T1_PAY_URL}/auth?client_id=${process.env.REACT_APP_T1_PAY_CLIENT_ID}&redirect_uri=${encodeURIComponent(window.location.origin + '/cuenta/login/t1pay-callback')}`;
+      window.location.href = authUrl;
+    }
   };
 
   return (
@@ -91,28 +126,23 @@ const LoginPage = () => {
         )}
         
         <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <input
-              type="text"
-              placeholder="Email o teléfono móvil"
-              value={emailOrPhone}
-              onChange={(e) => {
-                setEmailOrPhone(e.target.value);
-                if (error) setError('');
-              }}
-              className={`form-input auth-input ${error ? 'form-input-error' : ''}`}
-              required
-              autoComplete="email tel"
-              autoFocus
-            />
-            {error && <p className="form-error">{error}</p>}
-          </div>
+          <Input
+            type="text"
+            placeholder="Email o teléfono móvil"
+            value={emailOrPhone}
+            onChange={handleChange}
+            error={error}
+            required
+            autoComplete="email tel"
+            autoFocus
+            inputClassName="auth-input"
+          />
           
           <Button
             type="submit"
             variant="primary"
             fullWidth
-            disabled={!emailOrPhone.trim() || loading}
+            disabled={!emailOrPhone || loading}
             loading={loading}
           >
             Continuar

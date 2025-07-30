@@ -15,27 +15,29 @@ export const validateOTPCode = (code) => {
 };
 
 // Formatear precio en MXN
-export const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    minimumFractionDigits: 2
-  }).format(price);
+export const formatPrice = (price, currency = 'MXN') => {
+  // Si el precio es 0, mostrar formato especial
+  if (price === 0 || price === 0.00) {
+    return `0,00 $ ${currency}`;
+  }
+  
+  // Formatear con separador de miles y decimales
+  const formatted = price.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return `${formatted} $ ${currency}`;
 };
 
 // Formatear fecha
 export const formatDate = (dateString) => {
   const date = new Date(dateString);
-  const options = { 
-    day: 'numeric', 
-    month: 'short',
-    year: 'numeric'
-  };
-  return date.toLocaleDateString('es-MX', options);
+  const day = date.getDate();
+  const monthNames = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const month = monthNames[date.getMonth()];
+  return `${day} ${month}`;
 };
 
 // Enmascarar email
 export const maskEmail = (email) => {
+  if (!email || !email.includes('@')) return email || '';
   const [localPart, domain] = email.split('@');
   const maskedLocal = localPart.slice(0, 2) + '***' + localPart.slice(-1);
   return `${maskedLocal}@${domain}`;
@@ -43,6 +45,7 @@ export const maskEmail = (email) => {
 
 // Enmascarar teléfono
 export const maskPhone = (phone) => {
+  if (!phone) return '';
   const cleaned = phone.replace(/\D/g, '');
   return `***${cleaned.slice(-4)}`;
 };
@@ -101,7 +104,19 @@ export const levenshteinDistance = (str1, str2) => {
 
 // Verificar si el pedido puede ser devuelto
 export const canReturnOrder = (order) => {
+  // En desarrollo, permitir devoluciones para pedidos delivered o confirmed para testing
+  if (process.env.NODE_ENV === 'development') {
+    return order.status === 'delivered' || order.status === 'confirmed';
+  }
+  
+  // En producción, solo pedidos entregados
   if (order.status !== 'delivered') return false;
+  
+  // Si no hay fecha de entrega, asumir que fue reciente
+  if (!order.deliveryDate) {
+    // En desarrollo, permitir devoluciones sin fecha
+    return process.env.NODE_ENV === 'development';
+  }
   
   const deliveryDate = new Date(order.deliveryDate);
   const daysSinceDelivery = Math.floor((Date.now() - deliveryDate) / (1000 * 60 * 60 * 24));

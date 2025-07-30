@@ -4,9 +4,9 @@ import { useAuth } from '../../utils/AuthContext';
 import Loader from './Loader';
 
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="loader-page">
         <Loader size="large" />

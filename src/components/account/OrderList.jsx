@@ -43,7 +43,7 @@ const OrderList = ({ orders, onBuyAgain, onDownloadInvoice }) => {
                 <div className="order-details">
                   <span className="order-number">#{order.number}</span>
                   <span className="order-info">
-                    {order.items.length} {order.items.length === 1 ? 'artículo' : 'artículos'} • {formatDate(order.createdAt)}
+                    {order.items.length} {order.items.length === 1 ? 'artículo' : 'artículos'} • {formatDate(order.date || order.createdAt)}
                   </span>
                 </div>
               </div>
@@ -57,7 +57,7 @@ const OrderList = ({ orders, onBuyAgain, onDownloadInvoice }) => {
           </div>
           
           <div className="list-col-total">
-            {formatPrice(order.total)}
+            {formatPrice(order.total, order.currency)}
           </div>
           
           <div className="list-col-actions">

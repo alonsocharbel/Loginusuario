@@ -1,0 +1,26 @@
+/* AccountLayout.css */
+.account-layout {
+  min-height: 100vh;
+  background-color: var(--gray-100);
+}
+
+.account-main {
+  padding: var(--spacing-xl) 0;
+}
+
+.account-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .account-main {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .account-container {
+    padding: 0 var(--spacing-md);
+  }
+}

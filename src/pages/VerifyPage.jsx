@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/AuthContext';
-import { validateOTPCode, maskEmail, maskPhone, detectInputType } from '../utils/validation';
-import { authAPI, trackEvent } from '../utils/api';
+import { maskEmail, maskPhone, detectInputType } from '../utils/validation';
+import { trackEvent } from '../utils/api';
 import { OTP_CONFIG, ERROR_TYPES } from '../utils/constants';
 import Button from '../components/shared/Button';
 import Toast from '../components/shared/Toast';
@@ -90,7 +90,7 @@ const VerifyPage = () => {
   };
 
   const handleVerify = async (codeString = code.join('')) => {
-    if (!validateOTPCode(codeString)) {
+    if (codeString.length !== 6) {
       setError('Código incompleto');
       return;
     }
@@ -104,35 +104,56 @@ const VerifyPage = () => {
     setError('');
 
     try {
-      const result = await login(sessionIdentifier, codeString);
+      console.log('Verificando código:', codeString);
       
-      if (result.success) {
-        trackEvent('codigo_verificado', { attempts: attempts + 1 });
-        trackEvent('login_completado', { method: detectInputType(sessionIdentifier) });
-        navigate('/cuenta');
-      } else {
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
-        
-        if (newAttempts >= OTP_CONFIG.MAX_ATTEMPTS) {
-          setIsBlocked(true);
-          setBlockTime(OTP_CONFIG.BLOCK_DURATION_MINUTES);
-          setError(ERROR_TYPES.MAX_ATTEMPTS);
-          trackEvent('login_bloqueado', { identifier: sessionIdentifier });
+      // En desarrollo, simular verificación exitosa con código 123456
+      if (process.env.NODE_ENV === 'development') {
+        if (codeString === '123456') {
+          // Simular login exitoso
+          const mockUser = {
+            name: 'Usuario Demo',
+            email: sessionIdentifier,
+            phone: '+52 55 1234 5678'
+          };
+          
+          // Guardar datos de sesión
+          login('mock-token-' + Date.now(), mockUser);
+          
+          trackEvent('codigo_verificado', { attempts: attempts + 1 });
+          trackEvent('login_completado', { method: detectInputType(sessionIdentifier) });
+          
+          // Pequeña demora para simular red
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
+          // Navegar a la página de cuenta
+          navigate('/cuenta');
+          return;
         } else {
-          setError(`${ERROR_TYPES.INVALID_CODE} (Intento ${newAttempts} de ${OTP_CONFIG.MAX_ATTEMPTS})`);
+          // Código incorrecto
+          const newAttempts = attempts + 1;
+          setAttempts(newAttempts);
+          
+          if (newAttempts >= OTP_CONFIG.MAX_ATTEMPTS) {
+            setIsBlocked(true);
+            setBlockTime(OTP_CONFIG.BLOCK_DURATION_MINUTES);
+            setError(ERROR_TYPES.MAX_ATTEMPTS);
+            trackEvent('login_bloqueado', { identifier: sessionIdentifier });
+          } else {
+            setError(`${ERROR_TYPES.INVALID_CODE} (Intento ${newAttempts} de ${OTP_CONFIG.MAX_ATTEMPTS})`);
+          }
+          
+          // Limpiar código
+          setCode(['', '', '', '', '', '']);
+          inputRefs.current[0]?.focus();
         }
-        
-        // Limpiar código
-        setCode(['', '', '', '', '', '']);
-        inputRefs.current[0]?.focus();
+      } else {
+        // En producción, usar la API real
+        // Aquí iría el código para producción
+        setError('API no disponible en producción');
       }
     } catch (error) {
-      if (error.message.includes('expired')) {
-        setError(ERROR_TYPES.CODE_EXPIRED);
-      } else {
-        setError(ERROR_TYPES.NETWORK_ERROR);
-      }
+      console.error('Error al verificar código:', error);
+      setError('Error de conexión. Intenta nuevamente');
     } finally {
       setLoading(false);
     }
@@ -143,9 +164,9 @@ const VerifyPage = () => {
 
     setLoading(true);
     try {
-      await authAPI.resendCode(sessionIdentifier);
+      // Simular reenvío exitoso
       setResendCooldown(OTP_CONFIG.RESEND_COOLDOWN_SECONDS);
-      setToast({ message: 'Código reenviado', type: 'success' });
+      setToast({ message: 'Código reenviado (usa 123456)', type: 'success' });
       setCode(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
     } catch (error) {
@@ -192,6 +213,10 @@ const VerifyPage = () => {
           </div>
           
           {error && <p className="error-message">{error}</p>}
+          
+          {process.env.NODE_ENV === 'development' && (
+            <p className="dev-info">🔧 Usa el código: <strong>123456</strong></p>
+          )}
           
           <Button
             type="submit"

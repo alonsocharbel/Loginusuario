@@ -53,12 +53,12 @@ export const ORDER_STATUS = {
 
 // Mapeo de estados a texto UI
 export const ORDER_STATUS_TEXT = {
-  [ORDER_STATUS.PENDING_PAYMENT]: 'Pendiente de pago',
-  [ORDER_STATUS.CONFIRMED]: 'Confirmado',
-  [ORDER_STATUS.PROCESSING]: 'En proceso',
-  [ORDER_STATUS.SHIPPED]: 'Enviado',
-  [ORDER_STATUS.DELIVERED]: 'Entregado',
-  [ORDER_STATUS.CANCELLED]: 'Cancelado',
-  [ORDER_STATUS.REFUNDED]: 'Reembolsado',
-  [ORDER_STATUS.RETURN_IN_PROGRESS]: 'Devolución en curso'
+  pending_payment: 'Pendiente de pago',
+  confirmed: 'Confirmado',
+  processing: 'En proceso',
+  shipped: 'Enviado',
+  delivered: 'Entregado',
+  cancelled: 'Cancelado',
+  refunded: 'Reembolsado',
+  return_in_progress: 'Devolución en curso'
 };

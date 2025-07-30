@@ -1,0 +1,49 @@
+/* Sistema de Color T1 */
+:root {
+  /* Brand Red */
+  --brand-red: #DB3B2B;
+  --brand-red-800: #E26153;
+  --brand-red-600: #E9897E;
+  --brand-red-400: #F1B0A9;
+  --brand-red-200: #F9D2D2;
+  --brand-red-50: #FEF4F4;
+  
+  /* Gray */
+  --gray: #C3C3C3;
+  --gray-800: #CFCFCF;
+  --gray-600: #DBDBDB;
+  --gray-400: #E7E7E7;
+  --gray-200: #F3F3F3;
+  --gray-100: #F8F8F8;
+  
+  /* Funcionales */
+  --error: #E04C41;
+  --success: #39B54A;
+  --warning: #F15A29;
+  --yellow: #F7931E;
+  --warning-light: #FFF7AD;
+  --blue-link: #2980B9;
+  
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* Border Radius */
+  --border-radius: 4px;
+  --border-radius-lg: 8px;
+  --border-radius-xl: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}

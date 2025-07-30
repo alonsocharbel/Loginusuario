@@ -7,45 +7,65 @@ import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import ReturnPage from './pages/ReturnPage';
+import T1PayLoginPage from './pages/T1PayLoginPage';
+import T1PayCallbackPage from './pages/T1PayCallbackPage';
 import { AuthProvider } from './utils/AuthContext';
 import ProtectedRoute from './components/shared/ProtectedRoute';
+import DemoNavigator from './components/shared/DemoNavigator';
 import './styles/App.css';
 
 function App() {
+  // En desarrollo, desactivar protección de rutas para testing
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
   return (
     <AuthProvider>
       <Router>
         <div className="app">
+          {/* Demo Navigator solo en desarrollo */}
+          {isDevelopment && <DemoNavigator />}
           <Routes>
             {/* Rutas públicas */}
             <Route path="/cuenta/login" element={<LoginPage />} />
             <Route path="/cuenta/login/verificar" element={<VerifyPage />} />
+            <Route path="/cuenta/login/t1pay" element={<T1PayLoginPage />} />
+            <Route path="/cuenta/login/t1pay-callback" element={<T1PayCallbackPage />} />
             
-            {/* Rutas protegidas */}
+            {/* Rutas protegidas - En desarrollo no requieren autenticación */}
             <Route path="/cuenta" element={
-              <ProtectedRoute>
-                <AccountPage />
-              </ProtectedRoute>
+              isDevelopment ? <AccountPage /> : (
+                <ProtectedRoute>
+                  <AccountPage />
+                </ProtectedRoute>
+              )
             } />
             <Route path="/cuenta/perfil" element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
+              isDevelopment ? <ProfilePage /> : (
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              )
             } />
             <Route path="/cuenta/configuracion" element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
+              isDevelopment ? <SettingsPage /> : (
+                <ProtectedRoute>
+                  <SettingsPage />
+                </ProtectedRoute>
+              )
             } />
             <Route path="/cuenta/pedidos/:id" element={
-              <ProtectedRoute>
-                <OrderDetailPage />
-              </ProtectedRoute>
+              isDevelopment ? <OrderDetailPage /> : (
+                <ProtectedRoute>
+                  <OrderDetailPage />
+                </ProtectedRoute>
+              )
             } />
             <Route path="/cuenta/pedidos/:id/devolucion" element={
-              <ProtectedRoute>
-                <ReturnPage />
-              </ProtectedRoute>
+              isDevelopment ? <ReturnPage /> : (
+                <ProtectedRoute>
+                  <ReturnPage />
+                </ProtectedRoute>
+              )
             } />
             
             {/* Redirección por defecto */}

@@ -1,3 +1,6 @@
+/* Import auth styles */
+@import './auth.css';
+
 .app {
   min-height: 100vh;
   display: flex;

@@ -34,12 +34,12 @@
 }
 
 .btn-t1pay {
-  background-color: #5A31F4;
+  background-color: var(--brand-red);
   color: white;
 }
 
 .btn-t1pay:hover:not(:disabled) {
-  background-color: #4925d4;
+  background-color: var(--brand-red-800);
 }
 
 .btn-link {
