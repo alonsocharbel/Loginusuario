@@ -1,9 +1,8 @@
 // API base URL
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3000/api/v1';
 
-// Mock mode para desarrollo
-const IS_DEVELOPMENT = process.env.NODE_ENV === 'development';
-const USE_MOCK_API = IS_DEVELOPMENT && !process.env.REACT_APP_USE_REAL_API;
+// Mock mode - TEMPORAL: Siempre usar mock hasta tener API real
+const USE_MOCK_API = true; // Cambiado para siempre usar mock
 
 // Mock data para desarrollo
 const mockData = {
@@ -504,7 +503,7 @@ export const trackEvent = (eventName, properties = {}) => {
 };
 
 // Export para debugging
-if (IS_DEVELOPMENT) {
+if (process.env.NODE_ENV === 'development') {
   window.__T1_MOCK_DATA__ = mockData;
   window.__T1_USE_MOCK__ = USE_MOCK_API;
 }
